@@ -193,7 +193,7 @@ DeleteRow proc
 		pop bx
 		pop si
 		dec N; Уменьшаем количество имеющихся строк
-		sub bx,9
+		;sub bx,9
 		ret
 	
 	
@@ -201,8 +201,7 @@ DeleteRow proc
 DeleteRow endp	
 
 
-call_delete_rows:
-	call DeleteRow
+
 DeleteOddRows proc           ; удаление всех строк с четными числами
     mov cx, 0              
     mov cl, N              ; сl присваиваем N
@@ -219,6 +218,8 @@ DeleteOddRows proc           ; удаление всех строк с четн�
 		cmp cx, 0
 		mov dx,0
     	jle out_proc
+
+		
       
         
         check_element_loop:       ; чтение элементов
@@ -231,8 +232,17 @@ DeleteOddRows proc           ; удаление всех строк с четн�
 		
 		cmp dl,M
 		je call_delete_rows
+		jmp end_deletion
+		call_delete_rows:
+			call DeleteRow
+			pop cx
+			jmp DeleteOddRows
+
+		end_deletion:
 		add bl, 9                   ; bx + M_MAX  
-           
+        
+		
+
         pop cx
         loop check_row_loop              
        
@@ -282,7 +292,7 @@ Prog:
 
 	call InputMatrix
 	call DeleteOddRows
-	;call OutputMatrix
+	call OutputMatrix
 
 
 
