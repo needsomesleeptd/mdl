@@ -200,6 +200,9 @@ DeleteRow proc
 	
 DeleteRow endp	
 
+
+call_delete_rows:
+	call DeleteRow
 DeleteOddRows proc           ; удаление всех строк с четными числами
     mov cx, 0              
     mov cl, N              ; сl присваиваем N
@@ -227,9 +230,8 @@ DeleteOddRows proc           ; удаление всех строк с четн�
             loop check_element_loop     
 		
 		cmp dl,M
-		je DeleteRow
-
-        add bl, 9                   ; bx + M_MAX  
+		je call_delete_rows
+		add bl, 9                   ; bx + M_MAX  
            
         pop cx
         loop check_row_loop              
@@ -280,7 +282,7 @@ Prog:
 
 	call InputMatrix
 	call DeleteOddRows
-	call OutputMatrix
+	;call OutputMatrix
 
 
 
