@@ -10,6 +10,8 @@ PUBLIC VALUE
 
 PUBLIC TO_UNSIGNED_DEC
 
+PUBLIC TO_SIGNED_HEX
+
 
 STACKSEG SEGMENT PARA STACK 'STACK'
     DB 200H DUP(0)
@@ -70,13 +72,66 @@ TO_UNSIGNED_DEC PROC NEAR
         cmp ax,0
         jne to_dec
     ret
-
-
-
-
-
-
 TO_UNSIGNED_DEC endp
+
+
+
+
+
+ADD_MINUS PROC NEAR
+    mov bh,'-'
+    mov cl,0
+    mov ch,CUR_INDEX
+    mov si,cx
+    mov SHEX[si],bh
+    inc  ch
+    mov CUR_INDEX,ch
+
+    ret
+ADD_MINUS endp
+
+
+ADD_TO_HEX PROC NEAR
+
+    cmp bh,9
+    jg  add_hex
+    add bh,'0'
+    jmp insert_into_algo
+
+    add_hex:
+        add bh,'A'
+    
+
+    insert_into_algo:
+    mov cl,0
+    mov ch,CUR_INDEX
+    mov si,cx
+    mov SHEX[si],bh
+    inc  ch
+    mov CUR_INDEX,ch
+
+    ret
+ADD_TO_HEX endp
+
+
+TO_SIGNED_HEX PROC NEAR
+    mov ax,VALUE
+    mov bl,0
+    mov CUR_INDEX,0
+    cmp BIN_INDEX,1
+    jne to_hex
+    call ADD_MINUS
+    
+    to_hex:
+        mov cx,16
+        DIV cx ; Делим на  СС
+        mov bh,dl
+
+        call ADD_TO_DEC
+        cmp ax,0
+        jne to_hex
+    ret
+TO_SIGNED_HEX endp
 
 CODESEG ends
 
