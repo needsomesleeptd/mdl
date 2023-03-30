@@ -7,6 +7,8 @@ DataMatrix SEGMENT WORD  'DATA'
     N DB ?
 	M DB ?
     Matrix DB 100 DUP ('$')
+	N_MAX DB 1 DUP(9)
+	M_MAX DB 1 DUP(9)
 DataMatrix ENDS
 ;
 Code SEGMENT WORD 'CODE'
@@ -36,6 +38,7 @@ PrintNum proc            ; процедура вывода числа
 	add dl,'0'
 	int 21h
 
+	mov ah, 02h
     mov dl, ' '; Вывод пробела
     int 21h
     ret
@@ -52,6 +55,7 @@ NewLinePrint proc            ; процедура считывания числ�
  	mov DL,0Dh; Записываем возврат каретки
 	mov AH, 02h
 	int 21h
+	mov dl,0
 	ret
 
 NewLinePrint endp
@@ -84,7 +88,7 @@ InputMatrix proc           ; процедура чтения матрицы
             inc si                      ; si++
             loop read_element_loop     
         call NewLinePrint             ; вывод новой строки
-        add bl, 9                   ; bx + M_MAX  
+        add bl, M_MAX                   ; bx + M_MAX  
            
         pop cx                          ; достаем из стека cx
         loop read_row_loop              
@@ -117,7 +121,7 @@ OutputMatrix proc           ; процедура чтения матрицы
             inc si                      ; si++
             loop write_element_loop     
         call NewLinePrint             ; вывод новой строки
-        add bl, 9                   ; bx + M_MAX  
+        add bl, M_MAX                   ; bx + M_MAX  
            
         pop cx                          ; достаем из стека cx
         loop write_row_loop              
@@ -144,30 +148,43 @@ IsOdd endp
 
 
 DeleteRow proc
-	push bx
+	push bx; Сохраняем начальыне значения
 	push si
+
+
+	mov ax,bx
+	idiv N_MAX; Делим на кол-во символов в 1 строке
+	
+	mov bl,al
+
 	mov cx, 0   
 	mov cl,N
-
 	inc bx
 	sub cx,bx
-	dec bx
+	dec bx; Высчитываем воличество строк для перестановки
+
+	dec N;  Уменьшаем количество имеющихся строк
+	cmp cx, 0
+	mov dx,0
+    jle out_proc
+
 	RowMoveLoop:
 		push cx
 		mov cl, M
+		mov si,0
 		ElemMoveLoop:       ; чтение элементов
 			mov al,matrix[bx][si]
 			xchg matrix[bx][si + 9], al
 			mov matrix[bx][si],al
 			inc si                     
-			loop ElemMoveLoop
+		loop ElemMoveLoop
 
 		add bx,9
 		pop cx
 	loop RowMoveLoop
 	pop bx
 	pop si
-	dec N
+	
 	
 	
 DeleteRow endp	
