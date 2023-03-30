@@ -184,6 +184,7 @@ DeleteRow proc
 	loop RowMoveLoop
 	pop bx
 	pop si
+	ret
 	
 	
 	
@@ -232,6 +233,16 @@ DeleteOddRows endp
 
 out_proc:   ; вывход из процедуры по неверным данным 
     ret
+
+
+start_checking_over:
+	mov bx,0
+	mov si,0
+	pop cx
+	mov cx,0
+	mov cl,N_MAX
+	push cx
+	ret
 
 
 
