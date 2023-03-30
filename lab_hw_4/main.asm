@@ -147,44 +147,54 @@ IsOdd proc
 IsOdd endp
 
 
+
+
+
+
+
+
 DeleteRow proc
-	push bx; Сохраняем начальыне значения
+	push bx
 	push si
+	
+	mov al,N
+	dec al;индекс начала последней строки(в элементах)
+	mul M_MAX
+	cmp bx,ax
+    je EndLoop
 
 
 	mov ax,bx
-	idiv N_MAX; Делим на кол-во символов в 1 строке
-	
-	mov bl,al
+	div N_MAX
 
-	mov cx, 0   
+	mov ch,0
 	mov cl,N
-	inc bx
-	sub cx,bx
-	dec bx; Высчитываем воличество строк для перестановки
+	sub cl,al
+	dec cl
 
-	dec N;  Уменьшаем количество имеющихся строк
-	cmp cx, 0
-	mov dx,0
-    jle out_proc
 
 	RowMoveLoop:
 		push cx
 		mov cl, M
 		mov si,0
 		ElemMoveLoop:       ; чтение элементов
-			mov al,matrix[bx][si]
-			xchg matrix[bx][si + 9], al
-			mov matrix[bx][si],al
+			mov al,matrix[bx][si + 9]
+			mov matrix[bx][si], al
 			inc si                     
 		loop ElemMoveLoop
 
 		add bx,9
+
 		pop cx
+		
 	loop RowMoveLoop
-	pop bx
-	pop si
-	ret
+
+	EndLoop:
+		pop bx
+		pop si
+		dec N; Уменьшаем количество имеющихся строк
+		sub bx,9
+		ret
 	
 	
 	
