@@ -63,6 +63,7 @@ ADD_FIGURE ENDP
 
 INPUT_SIGNED_BIN PROC NEAR
     call NewLinePrint
+    mov BIN_INDEX,0
     mov bx, 0                 ; Число
     mov dx, 0                 
 
@@ -75,9 +76,11 @@ INPUT_SIGNED_BIN PROC NEAR
     jne number_is_positive
 
         inc BIN_INDEX
+        jmp is_negative
         number_is_positive:
+
             call ADD_FIGURE
-            
+            is_negative:
             mov ah,01h
             int 21h
 

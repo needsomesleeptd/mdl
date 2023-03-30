@@ -9,6 +9,13 @@ PUBLIC SHEX
 PUBLIC VALUE
 
 PUBLIC TO_UNSIGNED_DEC
+
+
+STACKSEG SEGMENT PARA STACK 'STACK'
+    DB 200H DUP(0)
+STACKSEG ENDS
+
+
 DATASEG SEGMENT PARA PUBLIC 'DATA'
     MASK16 DW 15
     MASK2 DW 1
@@ -25,7 +32,7 @@ DATASEG ENDS
 
 
 CODESEG SEGMENT PARA PUBLIC 'CODE'
-    ASSUME CS:CODESEG,DS:DATASEG
+    ASSUME CS:CODESEG,DS:DATASEG,SS:STACKSEG
 
 
 ADD_TO_DEC PROC NEAR
@@ -54,9 +61,10 @@ TO_UNSIGNED_DEC PROC NEAR
     inc ax
     
     to_dec:
-        mov ch,10
-        DIV ch ; Делим на  СС
-        mov bh,ah
+        mov cl,10
+        DIV cl ; Делим на  СС
+        mov bh,al
+
         mov ah,0
         call ADD_TO_DEC
         cmp ax,0
