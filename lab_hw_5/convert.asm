@@ -131,12 +131,14 @@ TO_SIGNED_HEX PROC NEAR   ; переводим в знаковое 16 сс
     mov bx,VALUE
     mov si, 4
    
-    AND bx,01000000000000000b
-    cmp bx,1
+    AND bx,8000h
+    cmp bx,0
     je nss
     ;not ax
+
+
     ;inc ax
-    AND ax,00111111111111111b
+    AND ax,7FFFh
     mov SHEX[0],'-'
     jmp convert_hex
 
