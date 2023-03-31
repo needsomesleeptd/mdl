@@ -20,10 +20,12 @@ STACKSEG ENDS
 
 DATASEG SEGMENT PARA PUBLIC 'DATA'
     MASK16 DW 15
+    MASK10 DW 9
     MASK2 DW 1
     BIN_INDEX DB 1 DUP(0)
     CUR_INDEX DB 1 DUP(0)
     VALUE DW 1
+    TEMP DW 1
     SHEX DB 6 DUP(0), '$'
     UDEC DB 8 DUP(0), '$'
     SBIN DB 19 DUP(0),'$'
@@ -90,6 +92,7 @@ ADD_MINUS PROC NEAR
     mov SHEX[si],bh
     inc  ch
     mov CUR_INDEX,ch
+    mov TEMP,0
 
     ret
 ADD_MINUS endp
@@ -113,29 +116,40 @@ ADD_TO_HEX PROC NEAR
     mov SHEX[si],bh
     inc  ch
     mov CUR_INDEX,ch
-
+    mov TEMP,0
+    inc si
     ret
 ADD_TO_HEX endp
 
 
-TO_SIGNED_HEX PROC NEAR
-    mov ax,VALUE
-    mov bl,0
-    mov CUR_INDEX,0
-    cmp BIN_INDEX,1
-    jne to_hex
-    call ADD_MINUS
-    
-    to_hex:
-        mov cx,16
-        DIV cx ; Делим на  СС
-        mov bh,dl
+TO_SIGNED_HEX PROC NEAR   ; переводим в безнаковое 16 сс
 
-        call ADD_TO_DEC
-        cmp ax,0
-        jne to_hex
+    mov ax, VALUE
+    mov si, 3   
+    mov TEMP,-1
+   ; cmp BIN_INDEX,1
+   ; je ADD_MINUS
+  
+   
+               
+    convert_hex:
+        mov dx, ax
+        and dx, MASK16
+        cmp dl, 10          ; доходим до 10, то число у нас F 
+        jb ISDIGIT
+        add dl, 7           ; прибавляем к числу 7
+        
+        ISDIGIT:
+        add dl, '0'         ; переводим число в символ
+        mov SHEX[SI], dl    ; записываем в буфер
+        mov cl, 4
+        sar ax, cl          ; сдвигаемся на 4, т.к одно 16-е число предст. 4-мя 2-ми
+        dec si
+        cmp si, TEMP
+        jne convert_hex
+        
     ret
-TO_SIGNED_HEX endp
+TO_SIGNED_HEX ENDP
 
 CODESEG ends
 
