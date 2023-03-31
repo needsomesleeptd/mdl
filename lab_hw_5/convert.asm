@@ -14,7 +14,7 @@ PUBLIC TO_SIGNED_HEX
 
 
 STACKSEG SEGMENT PARA STACK 'STACK'
-    DB 200H DUP(0)
+    DB 400H DUP(0)
 STACKSEG ENDS
 
 
@@ -142,8 +142,7 @@ TO_SIGNED_HEX PROC NEAR   ; переводим в безнаковое 16 сс
     mov si, 4
    
     mov SHEX[0],' '
-    cmp BIN_INDEX,1
-    je ADD_MINUS
+    
     
    
                
@@ -163,6 +162,9 @@ TO_SIGNED_HEX PROC NEAR   ; переводим в безнаковое 16 сс
         cmp si, 0
         jne convert_hex
         
+    
+    cmp BIN_INDEX,1
+    je ADD_MINUS
     ret
 TO_SIGNED_HEX ENDP
 
