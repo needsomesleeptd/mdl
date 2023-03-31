@@ -56,34 +56,20 @@ ADD_TO_DEC endp
 
 
 TO_UNSIGNED_DEC PROC NEAR
-   ; mov dh, SIGN         ; смотрим знак числа   
+    
+   
     mov cx, VALUE       
     cmp BIN_INDEX,1
-    jne DEC_POS           ; при положительном не записываем в 1 стариший бит '-'
-    ;mov UDEC[0], '-'
+    jne DEC_POS           ; при положительном не инвертируем
+  
     neg cx
    
     DEC_POS:
-    mov ax, 1      ; Счетчик степени
-	mov si, 16     ; Счетчик цикла
-	xor bx, bx     ; Переведенное число
+  
     
-    convert:
-		mov dx, cx
-		and dx, MASK2 ; 0 или 1
+    
 		
-		cmp dx, 0
-		je index
-        add bx, ax
-		
-		index:
-		
-		shl ax, 1
-		shr cx, 1
-		dec si
-		jnz convert
-		
-	mov ax, bx
+	mov ax, cx
 	mov cx, 10        ; Делитель для получения последней цифры
 	mov si, 5
 	
@@ -136,7 +122,7 @@ ADD_TO_HEX PROC NEAR
 ADD_TO_HEX endp
 
 
-TO_SIGNED_HEX PROC NEAR   ; переводим в безнаковое 16 сс
+TO_SIGNED_HEX PROC NEAR   ; переводим в знаковое 16 сс
 
     mov ax, VALUE
     mov si, 4
@@ -157,7 +143,7 @@ TO_SIGNED_HEX PROC NEAR   ; переводим в безнаковое 16 сс
         add dl, '0'         ; переводим число в символ
         mov SHEX[SI], dl    ; записываем в буфер
         mov cl, 4
-        sar ax, cl          ; сдвигаемся на 4, т.к одно 16-е число предст. 4-мя 2-ми
+        shr ax, cl          ; сдвигаемся на 4, т.к одно 16-е число предст. 4-мя 2-ми
         dec si
         cmp si, 0
         jne convert_hex
