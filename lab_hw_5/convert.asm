@@ -63,11 +63,15 @@ TO_UNSIGNED_DEC PROC NEAR
     inc ax
     
     to_dec:
-        mov cl,10
-        DIV cl ; Делим на  СС
-        mov bh,al
+        mov cx,10
+        DIV cx ; Делим на  СС
+        mov bh,dl
 
-        mov ah,0
+        ;mov ah,0
+        ;mov cl,CUR_INDEX
+        ;mov ch,0
+        ;mov si,cx
+        ;mov cx,0
         call ADD_TO_DEC
         cmp ax,0
         jne to_dec
