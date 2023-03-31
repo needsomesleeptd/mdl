@@ -56,27 +56,46 @@ ADD_TO_DEC endp
 
 
 TO_UNSIGNED_DEC PROC NEAR
-    mov ax,VALUE
-    mov bl,0
-    mov CUR_INDEX,0
+   ; mov dh, SIGN         ; смотрим знак числа   
+    mov cx, VALUE       
     cmp BIN_INDEX,1
-    jne to_dec
-    NOT ax
-    inc ax
+    jne DEC_POS           ; при положительном не записываем в 1 стариший бит '-'
+    ;mov UDEC[0], '-'
+    neg cx
+   
+    DEC_POS:
+    mov ax, 1      ; Счетчик степени
+	mov si, 16     ; Счетчик цикла
+	xor bx, bx     ; Переведенное число
     
-    to_dec:
-        mov cx,10
-        DIV cx ; Делим на  СС
-        mov bh,dl
-
-        ;mov ah,0
-        ;mov cl,CUR_INDEX
-        ;mov ch,0
-        ;mov si,cx
-        ;mov cx,0
-        call ADD_TO_DEC
-        cmp ax,0
-        jne to_dec
+    convert:
+		mov dx, cx
+		and dx, MASK2 ; 0 или 1
+		
+		cmp dx, 0
+		je index
+        add bx, ax
+		
+		index:
+		
+		shl ax, 1
+		shr cx, 1
+		dec si
+		jnz convert
+		
+	mov ax, bx
+	mov cx, 10        ; Делитель для получения последней цифры
+	mov si, 5
+	
+	DIGIT_TO_SYMB:
+		xor dx, dx
+		div cx
+		add dl, '0'
+		mov UDEC[si], dl
+		dec SI
+		cmp si, 0
+        jne DIGIT_TO_SYMB
+  
     ret
 TO_UNSIGNED_DEC endp
 
