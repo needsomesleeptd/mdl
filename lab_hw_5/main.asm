@@ -16,7 +16,6 @@ DATASEG SEGMENT PARA PUBLIC 'DATA'
         DB '1. Input signed binary number;', 13, 10
         DB '2. Decimal unsigned;', 13, 10
         DB '3. Hexadeciaml signed', 13, 10
-        DB '4. Convert to signed binary;', 13, 10, 10
         DB '0. Exit program.', 13, 10, 10
         DB 'Choose action: $'
         

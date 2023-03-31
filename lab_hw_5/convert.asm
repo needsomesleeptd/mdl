@@ -104,14 +104,9 @@ TO_UNSIGNED_DEC endp
 
 
 ADD_MINUS PROC NEAR
-    mov bh,'-'
-    mov cl,0
-    mov ch,CUR_INDEX
-    mov si,cx
-    mov SHEX[si],bh
-    inc  ch
-    mov CUR_INDEX,ch
-    mov TEMP,0
+    
+    mov SHEX[0],'-'
+    
 
     ret
 ADD_MINUS endp
@@ -144,11 +139,12 @@ ADD_TO_HEX endp
 TO_SIGNED_HEX PROC NEAR   ; переводим в безнаковое 16 сс
 
     mov ax, VALUE
-    mov si, 3   
-    mov TEMP,-1
-   ; cmp BIN_INDEX,1
-   ; je ADD_MINUS
-  
+    mov si, 4
+   
+    mov SHEX[0],' '
+    cmp BIN_INDEX,1
+    je ADD_MINUS
+    
    
                
     convert_hex:
@@ -164,7 +160,7 @@ TO_SIGNED_HEX PROC NEAR   ; переводим в безнаковое 16 сс
         mov cl, 4
         sar ax, cl          ; сдвигаемся на 4, т.к одно 16-е число предст. 4-мя 2-ми
         dec si
-        cmp si, TEMP
+        cmp si, 0
         jne convert_hex
         
     ret
