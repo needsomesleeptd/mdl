@@ -59,10 +59,13 @@ TO_UNSIGNED_DEC PROC NEAR
     
    
     mov cx, VALUE       
-    cmp BIN_INDEX,1
-    jne DEC_POS           ; при положительном не инвертируем
+    mov ax,0FFFFh
+    and cx,ax
+    cmp cx,1
+    mov cx, VALUE       
+    ;je DEC_POS           ; при положительном не инвертируем
   
-    neg cx
+    ;neg cx
    
     DEC_POS:
   
@@ -125,9 +128,22 @@ ADD_TO_HEX endp
 TO_SIGNED_HEX PROC NEAR   ; переводим в знаковое 16 сс
 
     mov ax, VALUE
+    mov bx,VALUE
     mov si, 4
    
+    AND bx,01000000000000000b
+    cmp bx,1
+    je nss
+    ;not ax
+    ;inc ax
+    AND ax,00111111111111111b
+    mov SHEX[0],'-'
+    jmp convert_hex
+
+
+    nss:
     mov SHEX[0],' '
+    
     
     
    

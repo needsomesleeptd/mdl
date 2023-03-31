@@ -83,19 +83,30 @@ INPUT_SIGNED_BIN PROC NEAR
             is_negative:
             mov ah,01h
             int 21h
-            cmp al,'2'
-            jg is_negative
-            cmp al,'0'
-            jl is_negative
+           
 
 
             cmp al, 13                ; сравнивает если ничего не ввели
             je ENDINPUT
 
+            cmp al,'2'
+            jg is_negative
+            cmp al,'0'
+            jl is_negative
+
           
     jmp number_is_positive
 
+   
+
     ENDINPUT:
+        cmp BIN_INDEX,1
+        jne nadd_one
+        ;not bx
+        AND bx,0FFFh
+        OR bx,0FFFh
+        
+        nadd_one:
         mov VALUE,bx
         ret
             
