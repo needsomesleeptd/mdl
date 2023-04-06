@@ -1,0 +1,1 @@
+ML.exe lab_hw_6/main.asm 
