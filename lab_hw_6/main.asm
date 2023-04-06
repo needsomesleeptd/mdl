@@ -17,46 +17,36 @@ MAIN:
 
 
 
-BEFORE_OLD_BREAK proc far
-    
-    
-    mov ah, 02h       ; 02h - функции вывода символа
-    int 1ah           ; функция BIOS для получения текущего времени
-                      ; прерывание BIOS 
-                       
-    cmp dh, CURRENT   ; сравниваем значение в dh с текущем
-	mov CURRENT, dh   ;
-	je end_my_breaking      ;
-    
-    mov al, 0F3h      ; установить параметры режима автоповтора
-                      ; 60h порт данных контроллера клавиатуры для чтения  
-	out 60h, al       ; инструкция OUT выводит данные из регистра AL или AX в порт ввода-вывода
-	mov al, SPEED     ; новая скорость автоповтора
-	out 60h, al       ; новое состояние светодиодов.
-    
-    dec SPEED         ; уменьшием вывод на 1 символ (30 символов - самый медленный)
-	test SPEED, 1111b  ; результат битового И записывается в ZF
-	jz reset          ; ZF = 1, то значит значение 0 и переходим к сбросу
-	jmp end_my_breaking     
-    
-    reset:
-        mov SPEED, 1111b  ; cброс скорость в начальное значение
-
-    end_my_breaking:
-    ret
-
-BEFORE_OLD_BREAK endp   
 
 
     
 MY_BREAKING:
-    push ax
-    pushf             ; сохраняет в стеке содержимое 16-битных РОН
-    call BEFORE_OLD_BREAK
-    popf
-    pop ax
-        
-    jmp CS:OLD_BREAKING ; вызываем стандартное прырывание
+    pushf    
+    call CS:OLD_BREAKING ; Вызываем старое прерывание чтобы IRET вернул все необходимые значения
+    
+    mov ah, 02h       
+    int 1ah           
+                       
+    cmp dh, CURRENT   ; Сравнение текущего значения с секундами
+	je END_MY_INTRRUPT ; Секунда не изменилась
+    mov CURRENT, dh   
+    
+    mov al, 0F3h        ; Команда смена значений на клавиатуре
+	out 60h, al       
+
+	mov al, SPEED     ; новая скорость автоповтора
+	out 60h, al       
+    
+    dec SPEED         ; Увеличиваем скорость
+	cmp SPEED, 1111b   ; Сравниваем скорость с максимальной 
+	je RESET          ; Восставнавливаем минимальное значение скорости
+	jmp END_MY_INTRRUPT ; Заканчиваем свое прерывание
+    
+    RESET:
+        mov SPEED, 1111b
+    
+    END_MY_INTRRUPT:
+        IRET
     
 INIT:
     mov ax, 3508h     ; ah = 35h, al = номер прерывания (00H до 0ffH)
@@ -66,8 +56,8 @@ INIT:
                       ; !!! Меняет сегментный регистр ES
                       ; ES:BX = адрес обработчика прерывания
     int 21h           ; Определить адрес обработчика.              
-    
-    cmp es:FLAG, 2  ; если уже был перехват нашей программой то возвращаем к старому значению
+   
+    cmp bx, offset MY_BREAKING  ; если уже был перехват нашей программой то возвращаем к старому значению
     je UNINSTALL
     
     jmp INSTALL
