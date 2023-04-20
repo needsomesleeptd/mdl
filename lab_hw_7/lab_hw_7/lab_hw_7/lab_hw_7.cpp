@@ -26,16 +26,23 @@ size_t asm_strlen(const char* str)
 		mov edi, str
 		xor al, al; Зануляем al так как ищем код 0
 		dec ecx
-		till_end_loop:
-				inc ecx
-				SCASB
-				jne till_end_loop
+		repne SCASB
+		not ecx
+		dec ecx
 		mov len,ecx
 		pop ecx
 		pop edi
 		pop eax
 	}
 	return len;
+}
+
+int min2(int a, int b)
+{
+	int c = a;
+	if (b < c)
+		c = b;
+	return c;
 }
 
 
@@ -109,6 +116,7 @@ int main()
 
 	printf("Strings overlap: %s\n", src);
 	//std::cout << (int)src << " " << (int)dst;
+	min2(1, 2);
 	my_strcpy(dst, dst + 5, len);
 	
 
