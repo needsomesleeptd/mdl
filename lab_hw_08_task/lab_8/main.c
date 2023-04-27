@@ -5,7 +5,6 @@
 #include "math_common.h"
 #include "comp_sin.h"
 
-
 int main()
 {
 	float f1 = 1.1f;
@@ -14,34 +13,41 @@ int main()
 	double d2 = 5.6;
 
 	double results_asm[8] = {
-			(double) sum_asm_32(f1, f2) / CLOCKS_PER_SEC,
-			(double) mul_asm_32(f1, f2) / CLOCKS_PER_SEC,
-			(double) sub_asm_32(f1, f2) / CLOCKS_PER_SEC,
-			(double) div_asm_32(f1, f2) / CLOCKS_PER_SEC,
-			(double) sum_asm_64(d1, d2) / CLOCKS_PER_SEC,
-			(double) mul_asm_64(d1, d2) / CLOCKS_PER_SEC,
-			(double) sub_asm_64(d1, d2) / CLOCKS_PER_SEC,
-			(double) div_asm_64(d1, d2) / CLOCKS_PER_SEC
+		(double)sum_asm_32(f1, f2) / CLOCKS_PER_SEC,
+		(double)mul_asm_32(f1, f2) / CLOCKS_PER_SEC,
+		(double)sub_asm_32(f1, f2) / CLOCKS_PER_SEC,
+		(double)div_asm_32(f1, f2) / CLOCKS_PER_SEC,
+		(double)sum_asm_64(d1, d2) / CLOCKS_PER_SEC,
+		(double)mul_asm_64(d1, d2) / CLOCKS_PER_SEC,
+		(double)sub_asm_64(d1, d2) / CLOCKS_PER_SEC,
+		(double)div_asm_64(d1, d2) / CLOCKS_PER_SEC
 	};
 
-	double results[8] = {0};
-	clock_t temp1 = 0, temp2 = 0;
+	double results[8] = { 0 };
+	clock_t temp = 0;
+	float_sum(f1, f2, &temp);
+	results[0] = (double)temp / CLOCKS_PER_SEC;
 
-	sum_no_asm(f1, f2, d1, d2, &temp1, &temp2);
-	results[0] = (double)temp1 / CLOCKS_PER_SEC;
-	results[4] = (double)temp2 / CLOCKS_PER_SEC;
+	double_sum(f1, f2, &temp);
+	results[4] = (double)temp / CLOCKS_PER_SEC;
 
-	mul_no_asm(f1, f2, d1, d2, &temp1, &temp2);
-	results[1] = (double)temp1 / CLOCKS_PER_SEC;
-	results[5] = (double)temp2 / CLOCKS_PER_SEC;
+	float_mul(f1, f2, &temp);
+	results[1] = (double)temp / CLOCKS_PER_SEC;
 
-	sub_no_asm(f1, f2, d1, d2, &temp1, &temp2);
-	results[2] = (double)temp1 / CLOCKS_PER_SEC;
-	results[6] = (double)temp2 / CLOCKS_PER_SEC;
+	double_mul(f1, f2, &temp);
+	results[5] = (double)temp / CLOCKS_PER_SEC;
 
-	div_no_asm(f1, f2, d1, d2, &temp1, &temp2);
-	results[3] = (double)temp1 / CLOCKS_PER_SEC;
-	results[7] = (double)temp2 / CLOCKS_PER_SEC;
+	float_sub(f1, f2, &temp);
+	results[2] = (double)temp / CLOCKS_PER_SEC;
+
+	double_sub(f1, f2, &temp);
+	results[6] = (double)temp / CLOCKS_PER_SEC;
+
+	float_div(f1, f2, &temp);
+	results[3] = (double)temp / CLOCKS_PER_SEC;
+
+	double_div(f1, f2, &temp);
+	results[7] = (double)temp / CLOCKS_PER_SEC;
 
 	printf("\n\n\n\nCompare floats.\n");
 	printf("Add: %g, %g\n", results_asm[0], results[0]);

@@ -21,6 +21,8 @@ OBJ_FILES := math_asm.o math_common.o comp_sin.o main.o
 
 .PHONY: assembly clean
 
+math.exe : math_asm.o math_common.o  main.o comp_sin.o
+	@gcc -std=c11 math_asm.o math_common.o comp_sin.o main.o -o $@
 
 main.o: main.c
 	@gcc -std=c11 -o $@ -c $<

@@ -9,10 +9,19 @@
 #include "time.h"
 
 
-void sum_no_asm(float a1, float b1, double a2, double b2, clock_t *res1, clock_t *res2);
-void mul_no_asm(float a1, float b1, double a2, double b2, clock_t *res1, clock_t *res2);
-void sub_no_asm(float a1, float b1, double a2, double b2, clock_t *res1, clock_t *res2);
-void div_no_asm(float a1, float b1, double a2, double b2, clock_t *res1, clock_t *res2);
+void float_sum(float a,float b, clock_t *res);
+void double_sum(double a,double b, clock_t *res);
+
+void float_mul(float a,float b, clock_t *res);
+void double_mul(double a,double b, clock_t *res);
+
+void float_sub(float a,float b, clock_t *res);
+void double_sub(double a,double b, clock_t *res);
+
+void float_div(float a,float b, clock_t *res);
+void double_div(double a,double b, clock_t *res);
+
+
 
 
 #endif //LAB_8_MATH_COMMON_H
