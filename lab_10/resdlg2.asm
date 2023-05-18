@@ -78,7 +78,7 @@ WndProc proc hWin   :DWORD,
 
       .if uMsg == WM_INITDIALOG
       
-        szText dlgTitle," Demo dialog box"
+        szText dlgTitle,"I want to sleep"
         invoke SendMessage,hWin,WM_SETTEXT,0,ADDR dlgTitle
 
         invoke LoadIcon,hInstance,200
@@ -109,11 +109,10 @@ WndProc proc hWin   :DWORD,
 
       .elseif uMsg == WM_COMMAND
         .if wParam == 1000
-            szText calcMsg,"Calculate Button"
+           
 
-              push    ebx
-              push    edi
-              firstDigit:
+            
+              ;first digit
                 invoke GetWindowText, hEdit1, addr buffer, 2
                 xor    edi, edi
                 xor    eax, eax
@@ -124,8 +123,7 @@ WndProc proc hWin   :DWORD,
                 add    eax, ebx
                 push   eax
               
-                push eax
-              secondDigit:
+              ;starting second digit
                 invoke GetWindowText, hEdit2, addr buffer, 2
                 xor    edi, edi
                 xor    eax, eax
@@ -134,16 +132,16 @@ WndProc proc hWin   :DWORD,
                 sub    bl, '0'
               
                 add    eax, ebx
-                push eax ; Сделал это чтобы сожно было просто джампить
+                
 
-              pop eax
-              pop ebx
+              pop ebx ; тут лежит первая цифра
               add eax,ebx
-              
+
             invoke wsprintf, addr buffer, addr format, eax
-            invoke MessageBox,hWin,addr buffer,ADDR dlgTitle,MB_OK
-            pop    edi
-            pop    ebx
+            ;invoke MessageBox,hWin,addr buffer,ADDR dlgTitle,MB_OK
+            invoke SetWindowText, hEdit4,addr buffer
+
+           
            
               
 
@@ -173,7 +171,7 @@ WndProc proc hWin   :DWORD,
 
       .endif
 
-    xor eax, eax    ; this must be here in NT4
+    xor eax, eax    ; this must be here in NT4 кароч просто свзь с прошлыми системами
     ret
 
 WndProc endp
