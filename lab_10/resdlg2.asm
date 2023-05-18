@@ -110,24 +110,40 @@ WndProc proc hWin   :DWORD,
       .elseif uMsg == WM_COMMAND
         .if wParam == 1000
             szText calcMsg,"Calculate Button"
-           
-            
+
+              push    ebx
+              push    edi
               firstDigit:
-                invoke GetWindowText, hEdit1, addr buffer, 3
+                invoke GetWindowText, hEdit1, addr buffer, 2
                 xor    edi, edi
                 xor    eax, eax
                 xor    ebx, ebx
-                mov    cx, 10
                 mov    bl, byte ptr buffer[edi]
                 sub    bl, '0'
-                mul    cx
+               
                 add    eax, ebx
                 push   eax
-                ;invoke     StdOut, eax
+              
+                push eax
+              secondDigit:
+                invoke GetWindowText, hEdit2, addr buffer, 2
+                xor    edi, edi
+                xor    eax, eax
+                xor    ebx, ebx
+                mov    bl, byte ptr buffer[edi]
+                sub    bl, '0'
+              
+                add    eax, ebx
+                push eax ; Сделал это чтобы сожно было просто джампить
 
+              pop eax
+              pop ebx
+              add eax,ebx
+              
             invoke wsprintf, addr buffer, addr format, eax
-            invoke MessageBox,hWin,ADDR buffer,ADDR dlgTitle,MB_OK
-         
+            invoke MessageBox,hWin,addr buffer,ADDR dlgTitle,MB_OK
+            pop    edi
+            pop    ebx
            
               
 
